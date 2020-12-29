@@ -10,39 +10,85 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-function EmployeePrompt (){
+const Employees = [];
+
+function EmployeePrompt() {
   inquirer.prompt([
     {
-      type:'input',
-      name:'name',
-      message:'What is the name of the person?'
+      type: 'input',
+      name: 'name',
+      message: 'What is the name of the person?'
     },
 
     {
-      type:'list',
-      name:'role',
-      message:'What is the role of the person?',
+      type: 'list',
+      name: 'role',
+      message: 'What is the role of the person?',
       choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
     },
 
+    // {
+    //   type: 'input',
+    //   name: 'id',
+    //   message: 'What is the id of the person?'
+    // },
+
+    // {
+    //   type: 'input',
+    //   name: 'email',
+    //   message: 'What is the email of the person?'
+    // },
+
     {
-      type:'input',
-      name:'id',
-      message:'What is the id of the person?'
-    },
-    
-    {
-      type:'input',
-      name:'email',
-      message:'What is the email of the person?'
+      type: 'list',
+      name: 'continue',
+      message: 'keeping going?',
+      choices: ['yes', 'no'],
     }
 
-  ])
+  ]).then(data => {
+    console.log(data);
+
+    if (data.role === 'manager'){
+      // inquier about the office num
+      // -- then push to employees and restart
+      // -- Employees.push (new Manager(data.name))
+    } else if(data.role === 'intern')
+    {
+      Employees.push (new Intern(data.name))
+    } else if (data.role === 'engineer'){
+      Employees.push (new Engineer(data.name))
+    }
+
+    // Employees.push(data);
+    console.log('!!!!!!')
+    console.log(Employees);
+
+
+    if (data.continue === 'yes'){
+      EmployeePrompt()
+    }
+    // ***create the emp using the class ***
+    // if role = engineer
+    // -- create new eng obj
+    // if role = intern
+    // -- create new intern obj
+
+    // push that emp to your emp array
+
+    // if continue is yes
+    // -- EmployeePrompt();
+  });
 }
 
-EmployeePrompt().then((data) => {
-  console.log(data);
-})
+EmployeePrompt();
+
+
+
+// console.log(a)
+// .then((data) => {
+//   console.log(data);
+// })
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
