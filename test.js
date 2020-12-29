@@ -12,18 +12,6 @@ const render = require("./lib/htmlRenderer");
 
 const Employees = [];
 
-    // {
-    //   type: 'input',
-    //   name: 'id',
-    //   message: 'What is the id of the person?'
-    // },
-
-    // {
-    //   type: 'input',
-    //   name: 'email',
-    //   message: 'What is the email of the person?'
-    // },
-
 async function EmployeePrompt() {
   inquirer.prompt([
     {
@@ -39,55 +27,47 @@ async function EmployeePrompt() {
       choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
     },
 
+    // {
+    //   type: 'input',
+    //   name: 'id',
+    //   message: 'What is the id of the person?'
+    // },
+
+    // {
+    //   type: 'input',
+    //   name: 'email',
+    //   message: 'What is the email of the person?'
+    // },
+
+    {
+      type: 'list',
+      name: 'continue',
+      message: 'keeping going?',
+      choices: ['yes', 'no'],
+    }
 
   ]).then(data => {
     console.log(data);
 
     if (data.role === 'manager'){
       // inquier about the office num
-      inquirer.prompt([
-        {
-          type: 'input',
-          name: 'officeNumber',
-          message: 'What is the office number of the manager?'
-        },
-
-        {
-          type: 'list',
-          name: 'continue',
-          message: 'keeping going?',
-          choices: ['yes', 'no'],
-        }
-    
-
-      ]).then((data2) => {
-        // -- then push to employees and restart
-        Employees.push (new Manager(data.name, data.id, data.email, data2.officeNumber));
-
-        console.log('111111');
-        console.log(Employees);
-        if (data2.continue === 'yes'){
-          EmployeePrompt()
-        }
-      })
-    } else if (data.role === 'intern'){
-    
-
-      
+      // -- then push to employees and restart
+      // -- Employees.push (new Manager(data.name))
+    } else if(data.role === 'intern')
+    {
       Employees.push (new Intern(data.name))
-
     } else if (data.role === 'engineer'){
       Employees.push (new Engineer(data.name))
-    };
+    }
 
     // Employees.push(data);
-    // console.log('!!!!!!')
-    // console.log(Employees);
+    console.log('!!!!!!')
+    console.log(Employees);
 
 
-    // if (data.continue === 'yes'){
-    //   EmployeePrompt()
-    // }
+    if (data.continue === 'yes'){
+      EmployeePrompt()
+    }
     // ***create the emp using the class ***
     // if role = engineer
     // -- create new eng obj
@@ -101,7 +81,11 @@ async function EmployeePrompt() {
   });
 }
 
-EmployeePrompt();
+a = EmployeePrompt();
+
+console.log('@@@');
+console.log(a);
+console.log('@@@');
 
 
 
