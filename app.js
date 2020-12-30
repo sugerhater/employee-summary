@@ -5,12 +5,15 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
-const OUTPUT_DIR = path.resolve(__dirname, "output");
+const OUTPUT_DIR = path.resolve(__dirname, "./output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-const Employees = [];
+const util = require('util');
+const writeFileAsync = util.promisify(fs.writeFile);
+
+const employees = [];
 
 // {
 //   type: 'input',
@@ -25,28 +28,38 @@ const Employees = [];
 // },
 
 async function employeePrompt() {
-  const { name, role } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'name',
-      message: 'What is the name of the person?'
-    },
-    // {
-    //   // email
-    // },
-    // {
-    //   // id? maybe?
-    // }
-    {
-      type: 'list',
-      name: 'role',
-      message: 'What is the role of the person?',
-      choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
-    },
-  ]);
+  try {
+    const { name, id, email, role } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'What is the name of the person?'
+      },
+
+      {
+        type: 'input',
+        name: 'id',
+        message: 'What is the id of the person?'
+      },
+
+      {
+        type: 'input',
+        name: 'email',
+        message: 'What is the email of the person?'
+      },
+
+      {
+        type: 'list',
+        name: 'role',
+        message: 'What is the role of the person?',
+        choices: ['manager', 'engineer', 'intern'],
+      },
+    ])
+  
 
   switch (role) {
-
+    // if role = manager
+    // -- create new manager obj
     case 'manager':
       const { officeNumber } = await inquirer.prompt([
         {
@@ -56,9 +69,11 @@ async function employeePrompt() {
         }
       ]);
 
-      // TODO CHANGE THIS!!!!
-      Employees.push(new Manager(name, 0, 'email', officeNumber));
+
+      employees.push(new Manager(name, id, email, officeNumber));
       break;
+    // if role = intern
+    // -- create new intern obj
     case 'intern':
       const { school } = await inquirer.prompt([
         {
@@ -67,9 +82,12 @@ async function employeePrompt() {
           message: 'What is the school name of the intern?'
         },
       ])
-      
-      Employees.push(new Intern(name, 0, 'email', school));
+
+      employees.push(new Intern(name, id, email, school));
       break;
+
+    // if role = engineer
+    // -- create new eng obj
     case 'engineer':
       const { github } = await inquirer.prompt([
         {
@@ -79,57 +97,54 @@ async function employeePrompt() {
         },
 
       ])
-      
-      Employees.push(new Engineer(name, 0, 'email', github));
+
+      employees.push(new Engineer(name, id, email, github));
       break;
   }
 
   const { continueOn } = await inquirer.prompt([
-      {
-        type: 'list',
-        name: 'continueOn',
-        message: 'keeping going?',
-        choices: ['yes', 'no'],
-      }
+    {
+      type: 'list',
+      name: 'continueOn',
+      message: 'keeping going?',
+      choices: ['yes', 'no'],
+    }
   ]);
-    
+
   if (continueOn === 'yes') {
     return employeePrompt();
   }
-  
-    // console.log(Employees);
 
-    // Employees.push(data);
-    // console.log('!!!!!!')
-
-
-    // if (data.continue === 'yes'){
-    //   EmployeePrompt()
-    // }
-    // ***create the emp using the class ***
-    // if role = engineer
-    // -- create new eng obj
-    // if role = intern
-    // -- create new intern obj
-
-    // push that emp to your emp array
-
-    // if continue is yes
-    // -- EmployeePrompt();
+} catch (err) {
+  console.log(err)
 }
 
-employeePrompt().then(() =>{
-  render(Employees);
+  // if (data.continue === 'yes'){
+  //   EmployeePrompt()
+  // }
+  // ***create the emp using the class ***
+  // if role = engineer
+  // -- create new eng obj
+  // if role = intern
+  // -- create new intern obj
+
+  // push that emp to your emp array
+
+  // if continue is yes
+  // -- EmployeePrompt();
+}
+
+employeePrompt().then(() => {
+
+  console.log(employees)
+  const htmlContent = render(employees);
+
+  writeFileAsync(outputPath, htmlContent);
+
   console.log("render function runned")
 
 })
 
-// console.log(Employees);
-
-// console.log(a)
-// .then((data) => {
-//   console.log(data);
-// })
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 

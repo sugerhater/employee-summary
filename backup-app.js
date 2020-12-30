@@ -10,7 +10,7 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-const Employees = [];
+const employees = [];
 
 // {
 //   type: 'input',
@@ -25,7 +25,7 @@ const Employees = [];
 // },
 
 async function EmployeePrompt() {
-    inquirer.prompt([
+    await inquirer.prompt([
       {
         type: 'input',
         name: 'name',
@@ -38,7 +38,6 @@ async function EmployeePrompt() {
         message: 'What is the role of the person?',
         choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
       },
-
 
     ]).then(data => {
       console.log(data);
@@ -62,9 +61,9 @@ async function EmployeePrompt() {
 
         ]).then((data2) => {
           // -- then push to employees and restart
-          Employees.push(new Manager(data.name, data.id, data.email, data2.officeNumber));
+          employees.push(new Manager(data.name, data.id, data.email, data2.officeNumber));
 
-          console.log(Employees);
+          console.log(employees);
           //if choose yes of continue, run the function again;
           if (data2.continue === 'yes') {
             EmployeePrompt()
@@ -86,8 +85,8 @@ async function EmployeePrompt() {
             choices: ['yes', 'no'],
           }
         ]).then(data2 => {
-          Employees.push(new Intern(data.name, data.id, data.email, data2.school));
-          console.log(Employees);
+          employees.push(new Intern(data.name, data.id, data.email, data2.school));
+          console.log(employees);
 
           if (data2.continue === 'yes') {
             EmployeePrompt()
@@ -110,8 +109,8 @@ async function EmployeePrompt() {
             choices: ['yes', 'no'],
           }
         ]).then(data2 => {
-          Employees.push(new Engineer(data.name, data.id, data.email, data2.github));
-          console.log(Employees);
+          employees.push(new Engineer(data.name, data.id, data.email, data2.github));
+          console.log(employees);
 
           if (data2.continue === 'yes') {
             EmployeePrompt()
@@ -148,7 +147,7 @@ async function EmployeePrompt() {
 
 async function run() {
   await EmployeePrompt();
-  render(Employees);
+  render(employees);
   console.log("render function runned")
 
 }
