@@ -24,105 +24,80 @@ const Employees = [];
 //   message: 'What is the email of the person?'
 // },
 
-async function EmployeePrompt() {
-  await inquirer.prompt([
+async function employeePrompt() {
+  const { name, role } = await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
       message: 'What is the name of the person?'
     },
-
+    // {
+    //   // email
+    // },
+    // {
+    //   // id? maybe?
+    // }
     {
       type: 'list',
       name: 'role',
       message: 'What is the role of the person?',
       choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
     },
-    
-  ]).then(data => {
-    console.log(data);
+  ]);
 
-    if (data.role === 'manager') {
-      // inquier about the office num
-      inquirer.prompt([
+  switch (role) {
+
+    case 'manager':
+      const { officeNumber } = await inquirer.prompt([
         {
           type: 'input',
           name: 'officeNumber',
           message: 'What is the office number of the manager?'
-        },
-
-        {
-          type: 'list',
-          name: 'continue',
-          message: 'keeping going?',
-          choices: ['yes', 'no'],
         }
+      ]);
 
-
-      ]).then((data2) => {
-        // -- then push to employees and restart
-        Employees.push(new Manager(data.name, data.id, data.email, data2.officeNumber));
-
-        console.log(Employees);
-        //if choose yes of continue, run the function again;
-        if (data2.continue === 'yes') {
-          EmployeePrompt()
-        }
-      })
-    } else if (data.role === 'intern') {
-
-      inquirer.prompt([
+      // TODO CHANGE THIS!!!!
+      Employees.push(new Manager(name, 0, 'email', officeNumber));
+      break;
+    case 'intern':
+      const { school } = await inquirer.prompt([
         {
           type: 'input',
           name: 'school',
           message: 'What is the school name of the intern?'
         },
-
-        {
-          type: 'list',
-          name: 'continue',
-          message: 'keeping going?',
-          choices: ['yes', 'no'],
-        }
-      ]).then(data2 => {
-        Employees.push(new Intern(data.name, data.id, data.email, data2.school));
-        console.log(Employees);
-
-        if (data2.continue === 'yes') {
-          EmployeePrompt()
-        }
-
-      })
-
-    } else if (data.role === 'engineer') {
-      inquirer.prompt([
+      ])
+      
+      Employees.push(new Intern(name, 0, 'email', school));
+      break;
+    case 'engineer':
+      const { github } = await inquirer.prompt([
         {
           type: 'input',
           name: 'github',
           message: 'What is the GitHub username of the engineer?'
         },
 
-        {
-          type: 'list',
-          name: 'continue',
-          message: 'keeping going?',
-          choices: ['yes', 'no'],
-        }
-      ]).then(data2 => {
-        Employees.push(new Engineer(data.name, data.id, data.email, data2.github));
-        console.log(Employees);
+      ])
+      
+      Employees.push(new Engineer(name, 0, 'email', github));
+      break;
+  }
 
-        if (data2.continue === 'yes') {
-          EmployeePrompt()
-        }
-
+  const { continueOn } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'continueOn',
+        message: 'keeping going?',
+        choices: ['yes', 'no'],
       }
-
-      )
-    }
+  ]);
     
+  if (continueOn === 'yes') {
+    return employeePrompt();
+  }
+  
     // console.log(Employees);
-    ;
 
     // Employees.push(data);
     // console.log('!!!!!!')
@@ -141,10 +116,9 @@ async function EmployeePrompt() {
 
     // if continue is yes
     // -- EmployeePrompt();
-  });
 }
 
-EmployeePrompt().then(() =>{
+employeePrompt().then(() =>{
   render(Employees);
   console.log("render function runned")
 
