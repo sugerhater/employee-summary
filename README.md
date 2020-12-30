@@ -11,6 +11,8 @@
 ## Description
 Use command line to prompt user, and use the information from command line to generate a team.html.
 
+![output-screenshot](https://user-images.githubusercontent.com/71996574/103387112-0b68c280-4ad0-11eb-9e81-54dd922eeaf3.PNG)
+
 ## Installation
 Node, jest, npm install inquirer
 
