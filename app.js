@@ -12,20 +12,20 @@ const render = require("./lib/htmlRenderer");
 
 const Employees = [];
 
-    // {
-    //   type: 'input',
-    //   name: 'id',
-    //   message: 'What is the id of the person?'
-    // },
+// {
+//   type: 'input',
+//   name: 'id',
+//   message: 'What is the id of the person?'
+// },
 
-    // {
-    //   type: 'input',
-    //   name: 'email',
-    //   message: 'What is the email of the person?'
-    // },
+// {
+//   type: 'input',
+//   name: 'email',
+//   message: 'What is the email of the person?'
+// },
 
 async function EmployeePrompt() {
-  inquirer.prompt([
+  await inquirer.prompt([
     {
       type: 'input',
       name: 'name',
@@ -38,12 +38,11 @@ async function EmployeePrompt() {
       message: 'What is the role of the person?',
       choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
     },
-
-
+    
   ]).then(data => {
     console.log(data);
 
-    if (data.role === 'manager'){
+    if (data.role === 'manager') {
       // inquier about the office num
       inquirer.prompt([
         {
@@ -58,31 +57,75 @@ async function EmployeePrompt() {
           message: 'keeping going?',
           choices: ['yes', 'no'],
         }
-    
+
 
       ]).then((data2) => {
         // -- then push to employees and restart
-        Employees.push (new Manager(data.name, data.id, data.email, data2.officeNumber));
+        Employees.push(new Manager(data.name, data.id, data.email, data2.officeNumber));
 
-        console.log('111111');
         console.log(Employees);
-        if (data2.continue === 'yes'){
+        //if choose yes of continue, run the function again;
+        if (data2.continue === 'yes') {
           EmployeePrompt()
         }
       })
-    } else if (data.role === 'intern'){
+    } else if (data.role === 'intern') {
+
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'school',
+          message: 'What is the school name of the intern?'
+        },
+
+        {
+          type: 'list',
+          name: 'continue',
+          message: 'keeping going?',
+          choices: ['yes', 'no'],
+        }
+      ]).then(data2 => {
+        Employees.push(new Intern(data.name, data.id, data.email, data2.school));
+        console.log(Employees);
+
+        if (data2.continue === 'yes') {
+          EmployeePrompt()
+        }
+
+      })
+
+    } else if (data.role === 'engineer') {
+      inquirer.prompt([
+        {
+          type: 'input',
+          name: 'github',
+          message: 'What is the GitHub username of the engineer?'
+        },
+
+        {
+          type: 'list',
+          name: 'continue',
+          message: 'keeping going?',
+          choices: ['yes', 'no'],
+        }
+      ]).then(data2 => {
+        Employees.push(new Engineer(data.name, data.id, data.email, data2.github));
+        console.log(Employees);
+
+        if (data2.continue === 'yes') {
+          EmployeePrompt()
+        }
+
+      }
+
+      )
+    }
     
-
-      
-      Employees.push (new Intern(data.name))
-
-    } else if (data.role === 'engineer'){
-      Employees.push (new Engineer(data.name))
-    };
+    // console.log(Employees);
+    ;
 
     // Employees.push(data);
     // console.log('!!!!!!')
-    // console.log(Employees);
 
 
     // if (data.continue === 'yes'){
@@ -101,9 +144,13 @@ async function EmployeePrompt() {
   });
 }
 
-EmployeePrompt();
+EmployeePrompt().then(() =>{
+  render(Employees);
+  console.log("render function runned")
 
+})
 
+// console.log(Employees);
 
 // console.log(a)
 // .then((data) => {

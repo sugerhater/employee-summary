@@ -12,82 +12,155 @@ const render = require("./lib/htmlRenderer");
 
 const Employees = [];
 
+// {
+//   type: 'input',
+//   name: 'id',
+//   message: 'What is the id of the person?'
+// },
+
+// {
+//   type: 'input',
+//   name: 'email',
+//   message: 'What is the email of the person?'
+// },
+
 async function EmployeePrompt() {
-  inquirer.prompt([
-    {
-      type: 'input',
-      name: 'name',
-      message: 'What is the name of the person?'
-    },
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'name',
+        message: 'What is the name of the person?'
+      },
 
-    {
-      type: 'list',
-      name: 'role',
-      message: 'What is the role of the person?',
-      choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
-    },
-
-    // {
-    //   type: 'input',
-    //   name: 'id',
-    //   message: 'What is the id of the person?'
-    // },
-
-    // {
-    //   type: 'input',
-    //   name: 'email',
-    //   message: 'What is the email of the person?'
-    // },
-
-    {
-      type: 'list',
-      name: 'continue',
-      message: 'keeping going?',
-      choices: ['yes', 'no'],
-    }
-
-  ]).then(data => {
-    console.log(data);
-
-    if (data.role === 'manager'){
-      // inquier about the office num
-      // -- then push to employees and restart
-      // -- Employees.push (new Manager(data.name))
-    } else if(data.role === 'intern')
-    {
-      Employees.push (new Intern(data.name))
-    } else if (data.role === 'engineer'){
-      Employees.push (new Engineer(data.name))
-    }
-
-    // Employees.push(data);
-    console.log('!!!!!!')
-    console.log(Employees);
+      {
+        type: 'list',
+        name: 'role',
+        message: 'What is the role of the person?',
+        choices: ['manager', 'engineer', 'intern', 'employee (if you are not sure the role of the person)'],
+      },
 
 
-    if (data.continue === 'yes'){
-      EmployeePrompt()
-    }
-    // ***create the emp using the class ***
-    // if role = engineer
-    // -- create new eng obj
-    // if role = intern
-    // -- create new intern obj
+    ]).then(data => {
+      console.log(data);
 
-    // push that emp to your emp array
+      if (data.role === 'manager') {
+        // inquier about the office num
+        inquirer.prompt([
+          {
+            type: 'input',
+            name: 'officeNumber',
+            message: 'What is the office number of the manager?'
+          },
 
-    // if continue is yes
-    // -- EmployeePrompt();
-  });
+          {
+            type: 'list',
+            name: 'continue',
+            message: 'keeping going?',
+            choices: ['yes', 'no'],
+          }
+
+
+        ]).then((data2) => {
+          // -- then push to employees and restart
+          Employees.push(new Manager(data.name, data.id, data.email, data2.officeNumber));
+
+          console.log(Employees);
+          //if choose yes of continue, run the function again;
+          if (data2.continue === 'yes') {
+            EmployeePrompt()
+          }
+        })
+      } else if (data.role === 'intern') {
+
+        inquirer.prompt([
+          {
+            type: 'input',
+            name: 'school',
+            message: 'What is the school name of the intern?'
+          },
+
+          {
+            type: 'list',
+            name: 'continue',
+            message: 'keeping going?',
+            choices: ['yes', 'no'],
+          }
+        ]).then(data2 => {
+          Employees.push(new Intern(data.name, data.id, data.email, data2.school));
+          console.log(Employees);
+
+          if (data2.continue === 'yes') {
+            EmployeePrompt()
+          }
+
+        })
+
+      } else if (data.role === 'engineer') {
+        inquirer.prompt([
+          {
+            type: 'input',
+            name: 'github',
+            message: 'What is the GitHub username of the engineer?'
+          },
+
+          {
+            type: 'list',
+            name: 'continue',
+            message: 'keeping going?',
+            choices: ['yes', 'no'],
+          }
+        ]).then(data2 => {
+          Employees.push(new Engineer(data.name, data.id, data.email, data2.github));
+          console.log(Employees);
+
+          if (data2.continue === 'yes') {
+            EmployeePrompt()
+          }
+
+        }
+
+        )
+      }
+
+      // console.log(Employees);
+      ;
+
+      // Employees.push(data);
+      // console.log('!!!!!!')
+
+
+      // if (data.continue === 'yes'){
+      //   EmployeePrompt()
+      // }
+      // ***create the emp using the class ***
+      // if role = engineer
+      // -- create new eng obj
+      // if role = intern
+      // -- create new intern obj
+
+      // push that emp to your emp array
+
+      // if continue is yes
+      // -- EmployeePrompt();
+    });
+  
 }
 
-a = EmployeePrompt();
+async function run() {
+  await EmployeePrompt();
+  render(Employees);
+  console.log("render function runned")
 
-console.log('@@@');
-console.log(a);
-console.log('@@@');
+}
 
+run();
 
+// EmployeePrompt().then(() => {
+//   render(Employees);
+//   console.log("render function runned")
+// })
+
+// console.log(Employees);
 
 // console.log(a)
 // .then((data) => {
